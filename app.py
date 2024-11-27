@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, flash, send_from_directory
 import os
 from werkzeug.utils import secure_filename
-
+import re
 
 app = Flask(__name__)
 
@@ -10,7 +10,7 @@ STATIC_UPLOAD_FOLDER = 'static/uploads'
 os.makedirs(STATIC_UPLOAD_FOLDER, exist_ok=True)
 
 app.config['STATIC_UPLOAD_FOLDER'] = STATIC_UPLOAD_FOLDER
-app.secret_key = 'your_secret_key'  # Cambia esto por una clave segura
+app.secret_key = os.environ.get('SECRET_KEY', 'default_secret_key')  # Cambia esto por una clave segura
 
 # Ruta para servir archivos estáticos
 @app.route('/static/<path:path>')
@@ -72,4 +72,5 @@ def contact():
     return redirect('/')
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    debug_mode = os.environ.get('FLASK_DEBUG', 'false').lower() == 'true'
+    app.run(debug=debug_mode)
